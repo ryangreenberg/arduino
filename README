@@ -1,0 +1,13 @@
+## Installation ##
+Install the following gems:
+	serialport	http://github.com/toholio/ruby-serialport
+
+And for running tests:
+	rspec
+	rr
+
+
+## Usage ##
+port = '/dev/tty.usbserial-A7006AkP' # Depending on what port your device is connected to
+arduino = Arduino.new :port => port, :read => { |in| puts "From Arduino: #{in}" }
+arduino.write("hello")
