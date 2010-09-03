@@ -20,8 +20,9 @@ describe "Arduino" do
     # end
     
     it "open a connection to the specified serial port" do
+      options = 
       port = '/dev/tty.usbserial-A7006SoU'
-      mock(SerialPort).new(satisfy { |p| p == port }, 9600, 8, 1, 0)
+      mock(SerialPort).new(satisfy { |p| p == port }, options)
       arduino = Arduino.new(:port => port)
     end
   end
