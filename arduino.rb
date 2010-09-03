@@ -13,7 +13,8 @@ class Arduino
     
   def connect(options)
     # throws Errno::ENOENT on invalid port
-    SerialPort.new(options[:port], options)
+    port = options.delete :port
+    SerialPort.new(port, options)
   end
   
   def close
@@ -21,7 +22,7 @@ class Arduino
   end
   
   def start_reader
-    Thread.new do |t|
+    Thread.new do
       read_buffer = ''
       while !@connection.closed?
         # read_buffer += @connection.getc

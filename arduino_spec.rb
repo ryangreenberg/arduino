@@ -15,20 +15,28 @@ describe "Arduino" do
     end
     
     it "should override default options with given options" do
-      options = {
-        :port => '/dev/tty.usbserial-A7006SoU',
+      overrides = {
         :baud_rate => 999,
         :data_bits => 998,
         :stop_bits => 997,
         :parity => SerialPort::NONE
       }
-      mock(SerialPort).new(options[:port], options[:baud_rate], options[:data_bits], options[:stop_bits], options[:parity])
+      options = overrides.merge :port => '/dev/tty.usbserial-A7006SoU'        
+      mock(SerialPort).new(options[:port], overrides)
       arduino = Arduino.new options      
     end
     
     it "open a connection to the specified serial port with the default options" do
       port = '/dev/tty.usbserial-A7006SoU'
-      mock(SerialPort).new(port, 9600, 8, 1, 0)
+      mock(SerialPort).new(
+        port, 
+        {
+          :baud_rate => 9600,
+          :data_bits => 8,
+          :stop_bits => 1,
+          :parity => SerialPort::NONE
+        }
+      )
       arduino = Arduino.new(:port => port)
     end
   end
