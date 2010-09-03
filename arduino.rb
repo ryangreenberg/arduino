@@ -2,14 +2,20 @@ require 'rubygems'
 require 'serialport'
 
 class Arduino
+  attr_reader :sp
   def initialize(options)
     raise Exception.new("No port specified") unless options[:port]
     options = default_options.merge(options)
     @connection = connect(options)
+    @writer = Writer.new(@connection)
     @read_until = "\r\n"
     @readers = []
     @readers.push options[:read] if options[:read]
     start_reader
+  end
+
+  def write(data)
+    @writer.write(data)
   end
     
   def connect(options)
@@ -38,7 +44,8 @@ class Arduino
   
   def update_readers(str)
     @readers.each do |reader|
-      reader.call str, self
+      p "Arduino read #{str}"
+      reader.call str, @writer
     end
   end
   
@@ -51,6 +58,17 @@ class Arduino
       :stop_bits => 1,
       :parity => SerialPort::NONE
     }
+  end
+  
+  class Writer
+    
+    def initialize(connection)
+      @connection = connection
+    end
+    
+    def write(data)
+      @connection.puts(data)
+    end
   end
 
 end
