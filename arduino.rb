@@ -6,6 +6,7 @@ class Arduino
     raise Exception.new("No port specified") unless options[:port]
     options = default_options.merge(options)
     @connection = connect(options)
+    @read_until = "\r\n"
     @readers = []
     @readers.push options[:read] if options[:read]
     start_reader
@@ -25,19 +26,19 @@ class Arduino
     Thread.new do
       read_buffer = ''
       while !@connection.closed?
-        # read_buffer += @connection.getc
-        # if read_buffer.end_with? @read_until
-        #   update_readers(read_buffer)
-        #   read_buffer = ''
-        # end
-        update_readers(@connection.getc)
+        read_buffer += @connection.getc.chr
+        if read_buffer.end_with? @read_until
+          update_readers(read_buffer)
+          read_buffer = ''
+        end
+        # update_readers(@connection.getc.chr)
       end
     end
   end
   
   def update_readers(str)
     @readers.each do |reader|
-      reader.call str
+      reader.call str, self
     end
   end
   
