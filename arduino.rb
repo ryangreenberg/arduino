@@ -9,14 +9,15 @@ class Arduino
     @connection = connect(options)
     @writer = Writer.new(@connection)
     @read_until = "\r\n"
-    @readers = []
-    @readers.push options[:read] if options[:read]
+    @listeners = []
+    @listeners.push options[:read] if options[:read]
     start_reader
   end
 
   def write(data)
     @writer.write(data)
   end
+  alias send write
     
   def connect(options)
     # throws Errno::ENOENT on invalid port
@@ -34,18 +35,22 @@ class Arduino
       while !@connection.closed?
         read_buffer += @connection.getc.chr
         if read_buffer.end_with? @read_until
-          update_readers(read_buffer)
+          update_listeners(read_buffer)
           read_buffer = ''
         end
-        # update_readers(@connection.getc.chr)
+        # update_listeners(@connection.getc.chr)
       end
     end
   end
   
-  def update_readers(str)
-    @readers.each do |reader|
-      p "Arduino read #{str}"
-      reader.call str, @writer
+  def update_listeners(msg)
+    @listeners.each do |listener|
+      # Assume that a listener is a Proc if it doesn't respond to :receive_message
+      if listener.respond_to? :receive_message
+        listener.receive_message msg
+      else
+        listener.call msg, @writer
+      end
     end
   end
   
