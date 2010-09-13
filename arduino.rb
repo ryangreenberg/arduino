@@ -2,34 +2,38 @@ require 'rubygems'
 require 'serialport'
 
 class Arduino
-  attr_reader :sp
+  
   def initialize(options)
     raise Exception.new("No port specified") unless options[:port]
     options = default_options.merge(options)
+    @read_until = options[:read_until]
     @connection = connect(options)
     @writer = Writer.new(@connection)
-    @read_until = "\r\n"
     @listeners = []
-    @listeners.push options[:read] if options[:read]
-    start_reader
+    add_listener(options[:read]) if options[:read]
+    start_read_thread
   end
-
-  def write(data)
-    @writer.write(data)
-  end
-  alias send write
     
   def connect(options)
     # throws Errno::ENOENT on invalid port
     port = options.delete :port
     SerialPort.new(port, options)
   end
+
+  def ready?
+    raise NotImplementedException.new
+  end
   
   def close
     @connection.close
   end
   
-  def start_reader
+  def write(data)
+    @writer.write(data)
+  end
+  alias send write
+  
+  def start_read_thread
     Thread.new do
       read_buffer = ''
       while !@connection.closed?
@@ -38,9 +42,16 @@ class Arduino
           update_listeners(read_buffer)
           read_buffer = ''
         end
-        # update_listeners(@connection.getc.chr)
       end
     end
+  end
+
+  def add_listener(listener)
+    @listeners << listener
+  end
+  
+  def remove_listener(listener)
+    @listener.delete(listener)
   end
   
   def update_listeners(msg)
@@ -61,7 +72,8 @@ class Arduino
       :baud_rate => 9600,
       :data_bits => 8,
       :stop_bits => 1,
-      :parity => SerialPort::NONE
+      :parity => SerialPort::NONE,
+      :read_until => "\r\n"
     }
   end
   
@@ -77,3 +89,5 @@ class Arduino
   end
 
 end
+
+class NotImplementedException < Exception; end;
