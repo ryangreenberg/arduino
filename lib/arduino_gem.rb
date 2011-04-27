@@ -1,3 +1,0 @@
-module ArduinoGem
-  # Your code goes here...
-end
