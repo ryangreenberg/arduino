@@ -1,0 +1,29 @@
+PATH
+  remote: .
+  specs:
+    arduino (0.0.1)
+      serialport (= 1.0.4)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    diff-lcs (1.1.2)
+    rr (1.0.2)
+    rspec (2.5.0)
+      rspec-core (~> 2.5.0)
+      rspec-expectations (~> 2.5.0)
+      rspec-mocks (~> 2.5.0)
+    rspec-core (2.5.1)
+    rspec-expectations (2.5.0)
+      diff-lcs (~> 1.1.2)
+    rspec-mocks (2.5.0)
+    serialport (1.0.4)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  arduino!
+  rr
+  rspec (~> 2.5.0)
+  serialport (= 1.0.4)
