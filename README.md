@@ -12,8 +12,8 @@ You can create standalone projects with Arduino using the provided IDE, but for 
 - Connect your Arduino to the world more easily. Instead of using an ethernet shield and dealing with networking on the Arduino board itself, just write Ruby and use libraries like openuri.
 
 ## Usage ##
-require 'arduino'
-port = '/dev/tty.usbserial-A7006AkP' # Depending on what port your device is connected to
-arduino = Arduino::Board.new(:port => port)
-arduino.connect
-arduino.send("hello")
+	require 'arduino'
+	port = '/dev/tty.usbserial-A7006AkP' # Depending on what port your device is connected to
+	arduino = Arduino::Board.new(:port => port)
+	arduino.connect
+	arduino.send("hello")
